@@ -20,7 +20,10 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+from api.views import dashboard
+
 urlpatterns = [
+    path("", dashboard, name="dashboard"), 
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
 ]

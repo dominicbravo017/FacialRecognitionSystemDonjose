@@ -3,6 +3,8 @@ from .models import Person, Attendance
 from django.utils import timezone
 import base64
 
+
+
 # retireve left join 
 class AttendanceTimestampSerializer(serializers.ModelSerializer):
     class Meta:

@@ -14,6 +14,10 @@ import numpy as np
 from django.utils import timezone
 import pytz
 from api import serializers
+from django.shortcuts import render
+
+def dashboard(request):
+    return render(request, "dashboard.html")
 
 class PersonAttendanceByIdAPIView(generics.RetrieveAPIView):
     queryset = Person.objects.prefetch_related('attendance_set')
