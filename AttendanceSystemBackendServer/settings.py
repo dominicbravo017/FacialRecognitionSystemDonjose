@@ -33,9 +33,9 @@ SECRET_KEY = 'django-insecure-f96n4i1)q17p8$k9%=-1)+xy-@lk_et25sfl6tru&*+6ezh6su
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # True
-DEBUG = False 
+DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -52,6 +52,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -128,15 +129,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 #stastic/
-STATIC_URL = 'static/'
-# STATIC_URL = '/static/'
-#new
+STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-#bnew
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
+# Let WhiteNoise handle compressed static files
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
