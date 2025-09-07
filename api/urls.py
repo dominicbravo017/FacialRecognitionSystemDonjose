@@ -1,10 +1,11 @@
 from django.urls import path
-from .views import PersonAttendanceListAPIView, PersonListCreateAPIView, FaceMatchAPIView, UpdatePersonAPIView, dashboard
+from .views import PersonAttendanceListAPIView, PersonListCreateAPIView, UpdatePersonAPIView, dashboard
 from .Views.ExcuseletterApi import ExcuseLetterCreateView
 from .Views.AuthenticationApi import PersonRegisterView, PersonUpdateInfoView, PinLoginView, ForgotPinView, PinLoginAlldataView
 from .Views.AdminApi import PersonUpdateView, PersonListView, PersonDetailView, PersonDeleteView
 from .Views.FacialRecognitionApi import FaceRecognitionWithIdAPIView
 from .Views.userDataApi import PersonAttendanceDetailView
+from .Views.SuperUserApi import SuperUserCreateView
 from api import views
 
 urlpatterns = [
@@ -17,7 +18,7 @@ urlpatterns = [
     path('getAttendanceById/<int:id>/', views.PersonAttendanceByIdAPIView.as_view(), name='attendance'),
 
     # Face recognition
-    path('face-match/', FaceMatchAPIView.as_view(), name='face-match'),
+    #path('face-match/', FaceMatchAPIView.as_view(), name='face-match'),
 
         # Face recognition and attendance marking new apu url POST
     path("facial-recognition/", FaceRecognitionWithIdAPIView.as_view(), name="face-match-withID"),
@@ -53,5 +54,8 @@ urlpatterns = [
 
     #user data
     path("person/attendance/<int:id>/", PersonAttendanceDetailView.as_view(), name="person-attendance-detail"),
+
+    # SuperUser creation endpoint
+    path("create-superuser/", SuperUserCreateView.as_view(), name="create-superuser"),
 
 ]

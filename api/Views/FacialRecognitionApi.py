@@ -133,79 +133,79 @@ class FaceRecognitionWithIdAPIView(APIView):
 
 
 
-class FaceRecognitionwithoutIdAPIView(APIView):
-    def post(self, request):
-        upload = request.FILES.get('image')
-        if not upload:
-            return Response({"error": "No image provided"}, status=status.HTTP_400_BAD_REQUEST)
+# class FaceRecognitionwithoutIdAPIView(APIView):
+#     def post(self, request):
+#         upload = request.FILES.get('image')
+#         if not upload:
+#             return Response({"error": "No image provided"}, status=status.HTTP_400_BAD_REQUEST)
 
-        with tempfile.NamedTemporaryFile(suffix=".jpg", delete=False) as temp_img:
-            for chunk in upload.chunks():
-                temp_img.write(chunk)
-            temp_img_path = temp_img.name
+#         with tempfile.NamedTemporaryFile(suffix=".jpg", delete=False) as temp_img:
+#             for chunk in upload.chunks():
+#                 temp_img.write(chunk)
+#             temp_img_path = temp_img.name
 
-        for person in Person.objects.all():
-            if not person.image:
-                continue
+#         for person in Person.objects.all():
+#             if not person.image:
+#                 continue
 
-            try:
-                np_arr = np.frombuffer(person.image, np.uint8)
-                db_image = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
+#             try:
+#                 np_arr = np.frombuffer(person.image, np.uint8)
+#                 db_image = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
 
-                ph_tz = pytz.timezone("Asia/Manila")
+#                 ph_tz = pytz.timezone("Asia/Manila")
 
-                with tempfile.NamedTemporaryFile(suffix=".jpg", delete=False) as db_img_file:
-                    cv2.imwrite(db_img_file.name, db_image)
+#                 with tempfile.NamedTemporaryFile(suffix=".jpg", delete=False) as db_img_file:
+#                     cv2.imwrite(db_img_file.name, db_image)
 
-                    result = DeepFace.verify(img1_path=temp_img_path, img2_path=db_img_file.name, enforce_detection=False)
+#                     result = DeepFace.verify(img1_path=temp_img_path, img2_path=db_img_file.name, enforce_detection=False)
                     
-                    if result["verified"]:
-                        timestamp = request.data.get("timestamp")
-                        if not timestamp:
-                            timestamp = timezone.now().astimezone(ph_tz)
+#                     if result["verified"]:
+#                         timestamp = request.data.get("timestamp")
+#                         if not timestamp:
+#                             timestamp = timezone.now().astimezone(ph_tz)
 
-                        # Get today's attendance (or create if missing)
-                        today = timezone.localdate()
-                        attendance, created = Attendance.objects.get_or_create(
-                            person=person,
-                            timestamp__date=today,
-                            defaults={"timestamp": timestamp}
-                        )
+#                         # Get today's attendance (or create if missing)
+#                         today = timezone.localdate()
+#                         attendance, created = Attendance.objects.get_or_create(
+#                             person=person,
+#                             timestamp__date=today,
+#                             defaults={"timestamp": timestamp}
+#                         )
 
-                        hour = timestamp.hour
+#                         hour = timestamp.hour
 
-                        # ----- AM LOGIC -----
-                        if 8 <= hour < 12:
-                            if not attendance.time_in_am:
-                                attendance.time_in_am = timestamp
-                            else:
-                                attendance.time_out_am = timestamp
+#                         # ----- AM LOGIC -----
+#                         if 8 <= hour < 12:
+#                             if not attendance.time_in_am:
+#                                 attendance.time_in_am = timestamp
+#                             else:
+#                                 attendance.time_out_am = timestamp
 
-                        # ----- PM LOGIC -----
-                        elif 13 <= hour < 18:  # within working hours
-                            # Auto-fix AM timeout if missing
-                            if attendance.time_in_am and not attendance.time_out_am:
-                                attendance.time_out_am = datetime.combine(today, time(12, 0, tzinfo=ph_tz))
+#                         # ----- PM LOGIC -----
+#                         elif 13 <= hour < 18:  # within working hours
+#                             # Auto-fix AM timeout if missing
+#                             if attendance.time_in_am and not attendance.time_out_am:
+#                                 attendance.time_out_am = datetime.combine(today, time(12, 0, tzinfo=ph_tz))
 
-                            if not attendance.time_in_pm:
-                                attendance.time_in_pm = timestamp
-                            else:
-                                attendance.time_out_pm = timestamp
+#                             if not attendance.time_in_pm:
+#                                 attendance.time_in_pm = timestamp
+#                             else:
+#                                 attendance.time_out_pm = timestamp
 
-                        # ----- AFTER 5 PM LOGIC -----
-                        elif hour >= 18:
-                            # If they missed PM timeout, auto-set to 5:00 PM
-                            if attendance.time_in_pm and not attendance.time_out_pm:
-                                attendance.time_out_pm = datetime.combine(today, time(17, 0, tzinfo=ph_tz))
+#                         # ----- AFTER 5 PM LOGIC -----
+#                         elif hour >= 18:
+#                             # If they missed PM timeout, auto-set to 5:00 PM
+#                             if attendance.time_in_pm and not attendance.time_out_pm:
+#                                 attendance.time_out_pm = datetime.combine(today, time(17, 0, tzinfo=ph_tz))
 
-                        attendance.save()
-                        return Response(FaceMatchAttendanceSerializer(attendance).data, status=status.HTTP_200_OK)
+#                         attendance.save()
+#                         return Response(FaceMatchAttendanceSerializer(attendance).data, status=status.HTTP_200_OK)
 
-            except Exception as e:
-                print(f"Skipping a person due to error: {e}")
-                continue
+#             except Exception as e:
+#                 print(f"Skipping a person due to error: {e}")
+#                 continue
 
-        return Response({"detail": "No matching face found"}, status=status.HTTP_404_NOT_FOUND)
+#         return Response({"detail": "No matching face found"}, status=status.HTTP_404_NOT_FOUND)
 
 
 
