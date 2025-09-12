@@ -4,7 +4,7 @@ from .Views.ExcuseletterApi import ExcuseLetterCreateView
 from .Views.AuthenticationApi import PersonRegisterView, PersonUpdateInfoView, PinLoginView, ForgotPinView, PinLoginAlldataView
 from .Views.AdminApi import PersonUpdateView, PersonListView, PersonDetailView, PersonDeleteView
 from .Views.FacialRecognitionApi import FaceRecognitionWithIdAPIView
-from .Views.userDataApi import PersonAttendanceDetailView
+from .Views.userDataApi import PersonAttendanceDetailView, GetallpersonAPIView
 from .Views.SuperUserApi import SuperUserCreateView
 from api import views
 

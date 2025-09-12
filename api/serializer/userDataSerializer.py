@@ -33,3 +33,17 @@ class PersonDetailSerializer(serializers.ModelSerializer):
             # ⚠️ security_answer excluded for security reasons
             "attendances",
         ]
+
+class PersonSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Person
+        fields = [
+            "id",
+            "name",
+            "role",
+            "position",
+            "wage",
+            "timestamp",
+            "pin",
+            "security_question",
+        ]

@@ -34,6 +34,11 @@ class UpdatePersonAPIView(generics.RetrieveUpdateAPIView):
     serializer_class = UpdateUserPersonSerializer
     lookup_field = 'id'
 
+class GetallpersonAPIView(generics.ListAPIView):
+    serializer_class = PersonSerializer
+    queryset = Person.objects.all().order_by('name')  # ascending alphabetical
+
+
 class PersonAttendanceListAPIView(generics.ListAPIView):
     serializer_class = GetPersonAttendanceSerializer
 
